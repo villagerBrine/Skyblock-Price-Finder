@@ -5,6 +5,7 @@ pages = 100
 #add reforges as needed bc I dont want to
 #gives current prices for certain items, may want different algorithms
 # should have named it things_to_purge_from_name
+token = "" # replace this
 list_of_removeable_items = [" ✪", "✪", "➊","➋", "➌", "➍", "➎", 
     "Hasty ", "Heroic ", "Suspicious ", "Ancient ", "Rapid ", "Fierce ", "Withered ", "Fabled ", "Necrotic ", "Giant ", 
     "Heavy ", "Warped ", "Gentle ", "Odd ", "Fast ", "Fair ", "Epic ", "Sharp ", "Heroic ", "Spicy ", "Legendary ", 
@@ -146,8 +147,9 @@ def price_of_all_items_in_market(name_of_item):
     return price
 
 def request_player_auctions_prices(player_name):
+    global token
     player_uuid = requests.get(url = "https://api.mojang.com/users/profiles/minecraft/" + player_name).json()['id']
-    request = requests.get( url = "https://api.hypixel.net/skyblock/auction?key=2a119251-dde7-4c39-b720-f4aa6f643972&player=" + player_uuid).json()
+    request = requests.get( url = "https://api.hypixel.net/skyblock/auction?key=" + token + "&player=" + player_uuid).json()
     total_up = [request['auctions'][x]['starting_bid'] for x in range(len(request['auctions']))]
     total = 0;
     sold_up = [request['auctions'][x]['highest_bid_amount'] for x in range(len(request['auctions']))]
@@ -158,8 +160,9 @@ def request_player_auctions_prices(player_name):
         sold += i;
     print("Total: " + prices_look_nice(total) + ": Sold:" + prices_look_nice(sold))
 def request_player_auctions(player_name):
+    global token
     player_uuid = requests.get(url = "https://api.mojang.com/users/profiles/minecraft/" + player_name).json()['id']
-    request = requests.get( url = "https://api.hypixel.net/skyblock/auction?key=2a119251-dde7-4c39-b720-f4aa6f643972&player=" + player_uuid).json()
+    request = requests.get( url = "https://api.hypixel.net/skyblock/auction?key=" + token +"&player=" + player_uuid).json()
     name_list = [request['auctions'][x]['item_name'] for x in range(len(request['auctions']))]
     bought_list = [not (request['auctions'][x]['bids'] == []) for x in range(len(request['auctions']))]
     print([name_list[x] + ': ' + str(bought_list[x]) for x in range(len(name_list))])
@@ -222,6 +225,3 @@ request_item("Wither Shield", 1)
 request_item("Shadow Warp", 1)
 request_item("Implosion", 1)
 total_price()
-request_item("Gold Gift Talisman", 1)
-request_item("Hegemony Artifact", 1)
-
